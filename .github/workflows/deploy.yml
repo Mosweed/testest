@@ -34,7 +34,7 @@ jobs:
 
       - name: Installeer Composer dependencies
         run: |
-          composer install --no-dev --optimize-autoloader
+          composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
 
       - name: Deploy via FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
@@ -43,7 +43,7 @@ jobs:
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           local-dir: ./
-          server-dir: /var/www/html/test.safouh.nl/
+          server-dir: /var/www/html/lara.safouh.nl/
 
 
       # 4️⃣ Upload bestanden via SFTP (of FTP, zie onderaan)
