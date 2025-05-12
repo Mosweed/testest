@@ -1,60 +1,29 @@
 <?php
 
+use App\Http\Controllers\DistrictController;
+use App\Http\Controllers\EffectController;
 use App\Http\Controllers\ProfileController;
-use App\Models\Product;
+use App\Http\Controllers\SimulationController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('home');
-})->name('home');
-
-Route::get('/products', function () {
-    return view('products', [
-        'products' => Product::all()
-    ]);
-})->name('products');
-
-Route::get('/shoppingbag', function () {
-    $cart = Product::getFive();
-
-    $total = 0;
-
-    foreach ($cart as $product) {
-        $total += $product['price'];
-    }
-
-    return view('shoppingbag', ['cart' => $cart , 'total' => $total]);
-})->name('shoppingbag');
-
-
-Route::get('/checkout', function () {
-
-    $cart = Product::getFive();
-
-    $total = 0;
-
-    foreach ($cart as $product) {
-        $total += $product['price'];
-    }
-    return view('checkout_page' ,['total' => $total]);
-})->name('checkout');
-
-Route::get('/product/{id}', function ($id) {
-    $product = Product::find($id);
-
-    return view('product', ['product' => $product]);
-})->name('product');
-
-Route::get('/contact', function () {
-    return view('contact');
-})->name('contact');
-
-
-
+Route::get('/', [SimulationController::class, 'index'])->name('simulation.index');
 
 Route::get('/dashboard', function () {
     return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+})->name('dashboard');
+
+Route::prefix('effects')->group(function () {
+    Route::get('/', [EffectController::class, 'index'])->name('effects.index');
+    Route::get('/create', [EffectController::class, 'create'])->name('effects.create');
+    Route::post('/', [EffectController::class, 'store'])->name('effects.store');
+    Route::get('/{effect}/edit', [EffectController::class, 'edit'])->name('effects.edit');
+    Route::put('/{effect}', [EffectController::class, 'update'])->name('effects.update');
+    Route::delete('/{effect}', [EffectController::class, 'destroy'])->name('effects.destroy');
+});
+
+    Route::resource('districts', DistrictController::class);
+
+
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -62,4 +31,4 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';
